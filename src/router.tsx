@@ -8,10 +8,12 @@ import {
 } from "@tanstack/react-router";
 import React, { useEffect } from "react";
 
+// Create a QueryClient instance
 const queryClient = new QueryClient();
 
-// Layout component
+// Root layout component
 function Layout({ children }: { children: React.ReactNode }) {
+  // Inject external ad script once
   useEffect(() => {
     const script = document.createElement("script");
     script.src =
@@ -31,28 +33,27 @@ function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Define root route
 const rootRoute = new RootRoute({
   component: Layout,
 });
 
+// Example child route
 const indexRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/",
   component: () => <div>Welcome to Resume Wizard!</div>,
 });
 
+// Build router
 const routeTree = rootRoute.addChildren([indexRoute]);
 
-// Exported function for TanStack Start hydration
-export function getRouter() {
-  return new Router({
-    routeTree,
-    context: { queryClient },
-  });
-}
+export const router = new Router({
+  routeTree,
+  context: { queryClient },
+});
 
-// Optional: component to provide router
+// Provide router to app
 export function AppRouter() {
-  const router = getRouter();
   return <RouterProvider router={router} />;
 }
